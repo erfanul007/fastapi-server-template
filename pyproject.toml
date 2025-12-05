@@ -1,0 +1,24 @@
+[tool.poetry]
+package-mode = false
+
+[project]
+name = "data-model-chat-server"
+version = "0.1.0"
+description = "RAG based agentic chat application with FastAPI"
+authors = [
+    {name = "Md Erfanul Islam Bhuiyan",email = "erfanul.islam@infinitibit.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "fastapi (>=0.123.9,<0.124.0)",
+    "uvicorn[standard] (>=0.38.0,<0.39.0)",
+    "pydantic-settings (>=2.12.0,<3.0.0)",
+    "httpx (>=0.28.1,<0.29.0)",
+    "slowapi (>=0.1.9,<0.2.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
