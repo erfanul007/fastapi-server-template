@@ -9,6 +9,20 @@ class Settings(BaseSettings):
     
     # Format: "amount/period" (e.g., "5/minute", "10/second", "100/hour")
     default_rate_limit: str = Field(default="1/second", alias="RATE_LIMIT")
+
+    db_user: str = Field(default="postgres", alias="DB_USER")
+    db_password: str = Field(default="1234", alias="DB_PASSWORD")
+    db_host: str = Field(default="localhost", alias="DB_HOST")
+    db_port: int = Field(default=5432, alias="DB_PORT")
+    db_name: str = Field(default="datamodelchat", alias="DB_NAME")
+    
+    @property
+    def database_url(self) -> str:
+        return f"postgresql+asyncpg://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
+    
+    @property
+    def database_url_sync(self) -> str:
+        return f"postgresql://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
     
     class Config:
         env_file = ".env"

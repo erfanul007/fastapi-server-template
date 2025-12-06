@@ -23,6 +23,11 @@ poetry run python -m src.main
 
 The API will be available at `http://localhost:8000`.
 
+## Database
+
+- **Create Migration**: `alembic revision --autogenerate -m "message"`
+- **Run Migration**: `alembic upgrade head`
+
 ## Development
 
 - **Add Dependencies**: `poetry add <package>`
