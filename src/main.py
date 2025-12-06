@@ -9,7 +9,7 @@ import logging
 setup_logging()
 logger = logging.getLogger(__name__)
 
-logger.info(f"Starting server on {settings.host}:{settings.port}")
+logger.info(f"Starting server on {settings.host}:{settings.port} [{settings.environment}]")
 
 app = FastAPI(title="Data Model Chat Server")
 
@@ -26,5 +26,6 @@ if __name__ == "__main__":
         "src.main:app",
         host=settings.host,
         port=settings.port,
-        reload=True,
+        reload=(settings.environment == "development"),
+        reload_dirs=["src"],
     )

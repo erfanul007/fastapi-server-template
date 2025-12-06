@@ -1,9 +1,11 @@
+from typing import Literal
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     host:str = Field(default='localhost', alias='HOST')
     port:int = Field(default=8001, alias='PORT')
+    environment: Literal['development','production'] = Field(default='development', alias='ENVIRONMENT')
     
     # Format: "amount/period" (e.g., "5/minute", "10/second", "100/hour")
     default_rate_limit: str = Field(default="1/second", alias="RATE_LIMIT")
