@@ -1,14 +1,28 @@
-from src.auth.models import User
-from src.auth.schemas import LoginResponse, UserCreate, UserLogin, UserRead
-from src.auth.security import get_password_hash, verify_password, create_access_token_data, create_jwt_token
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.auth.exceptions import UserAlreadyExistsError, InvalidCredentialsError
+
+from .models import User
+from .schemas import LoginResponse, UserCreate, UserLogin, UserRead
+from .security import (
+    get_password_hash,
+    verify_password,
+    create_access_token_data,
+    create_jwt_token,
+)
+from .exceptions import UserAlreadyExistsError, InvalidCredentialsError
+
 
 async def get_user_by_email(db: AsyncSession, email: str) -> User | None:
     stmt = select(User).where(User.email == email)
     res = await db.execute(stmt)
     return res.scalar_one_or_none()
+
+
+async def get_user_by_id(db: AsyncSession, user_id: int) -> User | None:
+    stmt = select(User).where(User.id == user_id)
+    res = await db.execute(stmt)
+    return res.scalar_one_or_none()
+
 
 async def register_user(db: AsyncSession, payload: UserCreate) -> UserRead:
     existing_user = await get_user_by_email(db, payload.email)
@@ -26,6 +40,7 @@ async def register_user(db: AsyncSession, payload: UserCreate) -> UserRead:
     await db.flush()
     return user
 
+
 async def login_user(db: AsyncSession, payload: UserLogin) -> LoginResponse:
     user = await get_user_by_email(db, payload.email)
     if not user:
@@ -34,6 +49,7 @@ async def login_user(db: AsyncSession, payload: UserLogin) -> LoginResponse:
         raise InvalidCredentialsError()
     access_token = create_jwt_token(create_access_token_data(user.id))
     return LoginResponse(access_token=access_token)
+
 
 async def get_all_users(db: AsyncSession) -> list[UserRead]:
     stmt = select(User)

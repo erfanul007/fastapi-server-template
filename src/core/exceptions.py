@@ -22,6 +22,7 @@ class AppError(Exception):
     Domain modules should inherit this and override
     the `status_code`, `error_code`, and `message` attributes.
     """
+
     status_code: int = 400
     error_code: str = "APP_ERROR"
     message: str = "Application error"
@@ -90,8 +91,7 @@ def validation_exception_handler(request: Request, exc: RequestValidationError):
     return JSONResponse(
         status_code=422,
         content=ErrorResponse(
-            detail="Request validation failed",
-            errors=exc.errors()
+            detail="Request validation failed", errors=exc.errors()
         ).model_dump(exclude_none=True),
     )
 
@@ -106,8 +106,7 @@ def rate_limit_handler(request: Request, exc: RateLimitExceeded):
     return JSONResponse(
         status_code=429,
         content=ErrorResponse(
-            detail=f"Rate limit exceeded: {exc}",
-            error_code="RATE_LIMIT_EXCEEDED"
+            detail=f"Rate limit exceeded: {exc}", error_code="RATE_LIMIT_EXCEEDED"
         ).model_dump(exclude_none=True),
     )
 
@@ -116,7 +115,9 @@ def generic_exception_handler(request: Request, exc: Exception):
     logger.exception("Unhandled error on %s %s", request.method, request.url.path)
     return JSONResponse(
         status_code=500,
-        content=ErrorResponse(detail="Internal server error").model_dump(exclude_none=True),
+        content=ErrorResponse(detail="Internal server error").model_dump(
+            exclude_none=True
+        ),
     )
 
 

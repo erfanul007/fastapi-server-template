@@ -3,21 +3,23 @@ from typing import Annotated
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
 
-from src.db.database import get_db
-from src.auth.security import decode_jwt_token
-from src.auth.models import User
-from src.auth.schemas import UserRead, TokenData
-from src.auth.exceptions import InvalidTokenError
+from src.db import get_db
+
+from .security import decode_jwt_token
+from .schemas import UserRead, TokenData
+from .exceptions import InvalidTokenError
+from .service import get_user_by_id
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
+
 
 def get_token_data(token: str = Depends(oauth2_scheme)) -> TokenData:
     token_data = decode_jwt_token(token)
     if token_data.token_type != "access":
         raise InvalidTokenError()
     return token_data
+
 
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
@@ -28,9 +30,7 @@ async def get_current_user(
     if token_data.token_type != "access":
         raise InvalidTokenError()
 
-    stmt = select(User).where(User.id == token_data.user_id)
-    res = await db.execute(stmt)
-    user = res.scalar_one_or_none()
+    user = await get_user_by_id(db, token_data.user_id)
 
     if not user:
         raise InvalidTokenError("User not found")
@@ -40,5 +40,6 @@ async def get_current_user(
 
     return user
 
-CurrentToken = Annotated[TokenData, Depends(get_token_data)]
-CurrentUser = Annotated[UserRead, Depends(get_current_user)]
+
+ValidToken = Annotated[TokenData, Depends(get_token_data)]
+AuthenticatedUser = Annotated[UserRead, Depends(get_current_user)]

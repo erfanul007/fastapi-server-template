@@ -1,4 +1,4 @@
-from src.core.exceptions import AppError
+from src.core import AppError
 
 
 class InvalidCredentialsError(AppError):
@@ -30,10 +30,12 @@ class PermissionDeniedError(AppError):
     error_code = "AUTH_PERMISSION_DENIED"
     message = "You do not have permission to perform this action"
 
+
 class UserNotFoundError(AppError):
     status_code = 404
     error_code = "AUTH_USER_NOT_FOUND"
     message = "User not found"
+
 
 class UserAlreadyExistsError(AppError):
     status_code = 409
