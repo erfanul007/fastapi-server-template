@@ -34,7 +34,6 @@ async def register_user(db: AsyncSession, payload: UserCreate) -> UserRead:
         first_name=payload.first_name,
         last_name=payload.last_name,
         hashed_password=get_password_hash(payload.password),
-        is_active=True,
     )
     db.add(user)
     await db.flush()
