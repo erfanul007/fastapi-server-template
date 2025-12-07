@@ -23,6 +23,10 @@ class Settings(BaseSettings):
     @property
     def database_url_sync(self) -> str:
         return f"postgresql://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
+
+    jwt_secret_key: str = Field(default="myjwtsecretkey", alias="JWT_SECRET_KEY")
+    jwt_algorithm: str = Field(default="HS256", alias="JWT_ALGORITHM")
+    access_token_expire_minutes: int = Field(default=30, alias="ACCESS_TOKEN_EXPIRE_MINUTES")
     
     class Config:
         env_file = ".env"

@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 from importlib.metadata import version, PackageNotFoundError
 import time
-from src.core.database import async_engine
+from src.db.database import async_engine
 import logging
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
