@@ -34,6 +34,11 @@ class Settings(BaseSettings):
         default=30, alias="ACCESS_TOKEN_EXPIRE_MINUTES"
     )
 
+    base_image_path: str = Field(
+        default="/mnt/storage2/preprocess-converted-data/pdf-extract/",
+        alias="BASE_IMAGE_PATH",
+    )
+
     cors_origins: str = Field(default="http://localhost:3000", alias="CORS_ORIGINS")
 
     @property
