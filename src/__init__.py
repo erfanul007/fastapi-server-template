@@ -1,1 +1,1 @@
-"""Application package for the data-model chat server."""
+"""Application package for the FastAPI Server Template."""

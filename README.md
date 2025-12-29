@@ -1,9 +1,24 @@
-# Data Model Chat Server
+# FastAPI Server Template
 
-A RAG-based agentic chat application built with FastAPI.
+A production-ready FastAPI server template with a focus on vertical slice architecture, scalability, and developer experience.
 
 **Requirements**: Python 3.12
-**Status**: ✅ Auth & Infrastructure | 🔄 Chat, RAG, Agents (Planned)
+
+## Features
+
+-   **FastAPI**: High-performance web framework.
+-   **SQLAlchemy 2.0**: Asynchronous database operations.
+-   **Pydantic**: Robust data validation and settings management.
+-   **Alembic**: Database migrations.
+-   **JWT Authentication**: Secure user authentication.
+-   **Dependency Injection**: Decoupled and testable components.
+-   **Vertical Slice Architecture**: Organized by feature for better maintainability.
+-   **Structured Logging**: Centralized and configurable logging.
+-   **Global Exception Handling**: Consistent error responses.
+-   **CORS & Rate Limiting**: Essential security middleware.
+-   **Health Checks**: Monitor application status.
+-   **WebSocket Support**: Generic real-time notification system.
+-   **Pre-commit Hooks**: Automated code quality checks with `black`, `ruff`, and `mypy`.
 
 ## Setup
 
@@ -49,10 +64,8 @@ poetry run alembic upgrade head
 **Code Quality**
 ```bash
 poetry run pre-commit run --all-files  # Run all checks
-poetry run pytest                      # Run tests (when available)
 ```
 
 ## Documentation
 
-- [ARCHITECTURE.md](docs/ARCHITECTURE.md) - Current system architecture
-- [ROADMAP.md](docs/ROADMAP.md) - Development roadmap
+- [ARCHITECTURE.md](docs/ARCHITECTURE.md) - System architecture

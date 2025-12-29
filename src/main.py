@@ -18,7 +18,7 @@ logger.info(
     f"Starting server on {settings.host}:{settings.port} [{settings.environment}]"
 )
 
-app = FastAPI(title="Data Model Chat Server")
+app = FastAPI(title="FastAPI Server Template")
 
 register_middlewares(app)
 

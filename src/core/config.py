@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     db_password: str = Field(default="1234", alias="DB_PASSWORD")
     db_host: str = Field(default="localhost", alias="DB_HOST")
     db_port: int = Field(default=5432, alias="DB_PORT")
-    db_name: str = Field(default="datamodelchat", alias="DB_NAME")
+    db_name: str = Field(default="templatedb", alias="DB_NAME")
 
     @property
     def database_url(self) -> str:
@@ -35,7 +35,7 @@ class Settings(BaseSettings):
     )
 
     base_image_path: str = Field(
-        default="/mnt/storage2/preprocess-converted-data/pdf-extract/",
+        default="./data/images",
         alias="BASE_IMAGE_PATH",
     )
 

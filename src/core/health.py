@@ -17,7 +17,7 @@ router = APIRouter()
 START_TIME = time.time()
 
 try:
-    APP_VERSION = version("data-model-chat-server")
+    APP_VERSION = version("fastapi-server-template")
 except PackageNotFoundError:
     APP_VERSION = "0.1.0"
 

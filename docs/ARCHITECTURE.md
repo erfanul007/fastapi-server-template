@@ -1,8 +1,8 @@
-# Data Model Chat Server - Architecture
+# FastAPI Server Template - Architecture
 
 ## Overview
 
-A RAG-based agentic chat application built with FastAPI. Currently implements a production-ready authentication system with database management.
+A production-ready FastAPI server template with a focus on vertical slice architecture, scalability, and developer experience. It provides a solid foundation for building new web applications and APIs.
 
 **Core Principles**: Async-first, type-safe, modular design with clean separation of concerns.
 
@@ -11,42 +11,40 @@ A RAG-based agentic chat application built with FastAPI. Currently implements a 
 ## Technology Stack
 
 ### Core Framework
-- **FastAPI** (≥0.123.9, <0.124.0) - Modern async web framework with automatic OpenAPI documentation
-- **Uvicorn[standard]** (≥0.38.0, <0.39.0) - ASGI server with standard extensions (websockets, httptools, uvloop)
-- **Python** (≥3.12, <3.13) - Required Python version with modern type system
+- **FastAPI** - Modern async web framework with automatic OpenAPI documentation.
+- **Uvicorn[standard]** - ASGI server with WebSocket and high-performance capabilities.
+- **Python** (≥3.12) - Modern Python with a rich type system.
 
 ### Database & ORM
-- **SQLAlchemy** (≥2.0.44, <3.0.0) - Modern ORM with full async support and typed `Mapped` annotations
-- **AsyncPG** (≥ 0.31.0, <0.32.0) - High-performance PostgreSQL async driver
-- **Psycopg2** (≥2.9.11, <3.0.0) - PostgreSQL adapter used by Alembic for migrations
-- **Alembic** (≥1.17.2, <2.0.0) - Database migration management tool
-- **PostgreSQL** - Relational database (external dependency)
+- **SQLAlchemy** (2.0+) - Modern ORM with full async support.
+- **AsyncPG** - High-performance asynchronous PostgreSQL driver.
+- **Psycopg2** - PostgreSQL adapter for Alembic migrations.
+- **Alembic** - Database migration management tool.
+- **PostgreSQL** - Recommended relational database (external).
 
 ### Security & Authentication
-- **PyJWT[crypto]** (≥2.10.1, <3.0.0) - JWT token generation/validation with cryptographic signing
-- **Passlib[bcrypt]** (≥1.7.4, <2.0.0) - Password hashing library with bcrypt support
-- **Bcrypt** (==4.3.0) - Secure password hashing algorithm
+- **PyJWT[crypto]** - JWT token generation and validation.
+- **Passlib[bcrypt]** - Password hashing library with bcrypt support.
+- **Bcrypt** - Secure password hashing algorithm.
 
 ### Configuration & Validation
-- **Pydantic[email]** (≥2.12.5, <3.0.0) - Data validation with email validation support
-- **Pydantic-settings** (≥2.12.0, <3.0.0) - Environment-based configuration management
+- **Pydantic[email]** - Data validation with email support.
+- **Pydantic-settings** - Environment-based configuration management.
 
 ### API Features
-- **SlowAPI** (≥0.1.9, <0.2.0) - Rate limiting middleware for FastAPI
-- **HTTPX** (≥0.28.1, <0.29.0) - Async HTTP client for external API calls
+- **SlowAPI** - Rate limiting middleware.
+- **HTTPX** - Async HTTP client for external API calls.
+- **WebSockets** - Built-in support for real-time communication.
+- **NH3** - HTML sanitization for user-generated content.
 
 ### Dependency Management
-- **Poetry** (2.0+) - Modern dependency and package manager
-  - Uses **PEP 621** (`pyproject.toml` [project] table) for metadata
-  - **Poetry Core** (≥2.0.0, <3.0.0) as build backend
-  - Package mode disabled (`package-mode = false`)
-  - Dependency groups for separating dev dependencies
+- **Poetry** - Modern dependency and package manager.
 
 ### Development Tools
-- **Pre-commit** (≥4.5.0, <5.0.0) - Git hook framework
-- **Black** (≥25.11.0, <26.0.0) - Opinionated code formatter
-- **Ruff** (≥0.14.8, <0.15.0) - Fast Python linter
-- **MyPy** (≥1.19.0, <2.0.0) - Static type checker
+- **Pre-commit** - Git hook framework for code quality.
+- **Black** - Opinionated code formatter.
+- **Ruff** - Fast Python linter.
+- **MyPy** - Static type checker.
 
 ---
 
@@ -54,7 +52,7 @@ A RAG-based agentic chat application built with FastAPI. Currently implements a 
 
 ### Root Directory
 ```
-data-model-chat-server/
+fastapi-server-template/
 ├── .env                     # Environment variables (gitignored)
 ├── .env.example             # Environment variable template
 ├── .gitignore              # Git ignore patterns
@@ -64,9 +62,7 @@ data-model-chat-server/
 ├── poetry.lock             # Locked dependency versions
 ├── README.md               # Project documentation
 ├── docs/                   # Documentation files
-│   ├── ARCHITECTURE.md     # This file
-│   └── ROADMAP.md          # Development roadmap
-├── logs/                   # Application logs (timestamped files)
+│   └── ARCHITECTURE.md     # This file
 ├── migrations/             # Alembic database migrations
 │   ├── env.py             # Alembic environment configuration
 │   ├── script.py.mako     # Migration template
@@ -90,7 +86,7 @@ src/
 │   ├── schemas.py         # Pydantic request/response schemas
 │   ├── security.py        # JWT & password hashing utilities
 │   ├── service.py         # Business logic (registration, login)
-│   ├── dependencies.py    # FastAPI auth dependencies (token validation)
+│   ├── dependencies.py    # FastAPI auth dependencies
 │   ├── router.py          # Auth API endpoints
 │   └── exceptions.py      # Auth-specific exceptions
 │
@@ -98,13 +94,26 @@ src/
 │   ├── __init__.py
 │   ├── config.py          # Pydantic Settings configuration
 │   ├── exceptions.py      # Base exception & global handlers
-│   ├── middleware.py      # CORS, rate limiting, process time tracking
+│   ├── middleware.py      # CORS, rate limiting, etc.
 │   ├── logging.py         # Logging configuration
 │   └── health.py          # Health check endpoints
 │
-└── db/                     # Database layer
+├── db/                     # Database layer
+│   ├── __init__.py
+│   ├── database.py        # Async engine, session factory
+│   └── models.py          # Base model definition
+│
+├── realtime/               # Generic WebSocket pub/sub system
+│   ├── __init__.py
+│   ├── connection_manager.py # Manages WebSocket connections
+│   ├── router.py             # WebSocket pub/sub endpoints
+│   ├── notify.py             # Server-side notification utilities
+│   └── schemas.py            # Pydantic schemas for WebSocket communication
+│
+└── utils/                  # Miscellaneous utilities
     ├── __init__.py
-    └── database.py        # Async engine, session factory, dependency
+    ├── sanitizer.py         # HTML sanitization utility
+    └── image_utils.py       # Image and file handling utility
 ```
 
 ---
@@ -121,40 +130,38 @@ ProcessTimeMiddleware (request timing)
     ↓
 CORSMiddleware (cross-origin handling)
     ↓
-SlowAPI Rate Limiter (rate limit enforcement)
+SlowAPI Rate Limiter
     ↓
-FastAPI Router (route matching)
+FastAPI Router
     ↓
 Authentication Dependency (if required)
     ↓
-Route Handler (controller)
+Route Handler
     ↓
 Service Layer (business logic)
     ↓
 Database Session (SQLAlchemy async)
     ↓
-Response (JSON)
+Response (JSON / WebSocket)
 ```
 
 ### Middleware Order
-1. **ProcessTimeMiddleware** - Custom middleware that logs request duration and adds `X-Process-Time` header
-2. **CORSMiddleware** - Starlette middleware for cross-origin resource sharing
-3. **Rate Limiter** - SlowAPI state attached to app, enforced via decorators/dependencies
-4. **FastAPI Routing** - Route matching and dependency injection
+1. **ProcessTimeMiddleware** - Logs request duration and adds `X-Process-Time` header.
+2. **CORSMiddleware** - Handles cross-origin resource sharing.
+3. **Rate Limiter** - Enforces request rate limits.
+4. **FastAPI Routing** - Matches routes and handles dependency injection.
 
 ### Async Architecture
-- **Full async/await stack** from web server to database
-- **AsyncPG** provides non-blocking PostgreSQL operations
-- **Async session management** with automatic commit/rollback in `get_db()` dependency
-- **Concurrent request handling** without threading overhead
-- **Connection pooling** managed by SQLAlchemy async engine
+- Fully asynchronous stack from web server to database.
+- **AsyncPG** provides non-blocking PostgreSQL operations.
+- Async session management with automatic commit/rollback via `Depends(get_db)`.
+- Concurrent request handling without threading overhead.
 
 ### Dependency Injection
-FastAPI's dependency injection system provides:
-- **Database sessions** injected per request via `Depends(get_db)`
-- **Authentication** via `Depends(oauth2_scheme)` and custom dependencies
-- **Type-annotated dependencies** for IDE autocomplete and type checking
-- **Nested dependencies** (e.g., `get_current_user` depends on `oauth2_scheme`)
+FastAPI's DI system provides:
+- **Database sessions** per request (`Depends(get_db)`).
+- **Authentication** via custom dependencies (e.g., `ValidToken`).
+- **Type-annotated dependencies** for clarity and type safety.
 
 ---
 
@@ -162,471 +169,173 @@ FastAPI's dependency injection system provides:
 
 ### JWT-Based Stateless Authentication
 
-**Token Structure** (TokenData schema):
-- `user_id` (int) - Unique user identifier
-- `token_type` (str) - Always "access" for access tokens
-- `exp` (datetime) - Token expiration timestamp
+**Token Structure**:
+- `user_id` (int): Unique user identifier.
+- `token_type` (str): "access".
+- `exp` (datetime): Token expiration.
 
 **Configuration**:
-- **Algorithm**: HS256 (HMAC with SHA-256)
-- **Secret Key**: Configurable via `JWT_SECRET_KEY` environment variable
-- **Expiration**: 30 minutes (configurable via `ACCESS_TOKEN_EXPIRE_MINUTES`)
+- **Algorithm**: HS256 (configurable via `JWT_ALGORITHM`).
+- **Secret Key**: Set via `JWT_SECRET_KEY` (**must be changed in production**).
+- **Expiration**: Configurable via `ACCESS_TOKEN_EXPIRE_MINUTES`.
 
 **Password Security**:
-- **Hashing**: Bcrypt with automatic salting
-- **Passlib CryptContext** with bcrypt as the active scheme
-- **No plaintext passwords** stored or logged
-
-### Authentication Flow
-
-1. **Registration** (`POST /api/auth/register`):
-   - Validate email uniqueness
-   - Hash password with bcrypt
-   - Create user in database
-   - Return user data (no token)
-
-2. **Login** (`POST /api/auth/login`):
-   - Verify email exists
-   - Verify password hash
-   - Generate JWT token
-   - Return access token
-
-3. **Protected Endpoints**:
-   - Extract bearer token from `Authorization` header
-   - Decode and validate JWT
-   - Verify token type and expiration
-   - Load user from database
-   - Inject authenticated user into route handler
+- **Hashing**: Bcrypt with automatic salting via Passlib.
+- No plaintext passwords are ever stored or logged.
 
 ### API Endpoints
 
-| Endpoint | Method | Auth | Description | Response |
-|----------|--------|------|-------------|----------|
-| `/api/auth/register` | POST | No | Create new user account | UserRead (201) |
-| `/api/auth/login` | POST | No | Authenticate and get token | LoginResponse (200) |
-| `/api/auth/me` | GET | Yes | Get current user profile | UserRead (200) |
-| `/api/auth/users` | GET | Yes | List all users | List[UserRead] (200) |
+| Endpoint | Method | Auth | Description |
+|---|---|---|---|
+| `/api/auth/register` | POST | No | Create a new user account. |
+| `/api/auth/login` | POST | No | Authenticate and get a JWT token. |
+| `/api/auth/me` | GET | Yes | Get the current authenticated user's profile. |
+| `/api/auth/users` | GET | Yes | List all users in the system. |
 
-### OAuth2 Integration
-Uses FastAPI's `OAuth2PasswordBearer` scheme with `tokenUrl="auth/login"` for OpenAPI documentation.
+---
+
+## Real-time Notification System
+
+A generic WebSocket-based system for real-time, topic-based publish/subscribe communication.
+
+### Connection Management (`ConnectionManager`)
+- Manages active WebSocket connections.
+- Allows clients to subscribe to arbitrary string-based "topics".
+- Provides a method to broadcast messages to all clients subscribed to a specific topic.
+
+### Endpoint and Behavior
+| Endpoint | Method | Auth | Description |
+|---|---|---|---|
+| `/api/ws/{topic}` | WebSocket | Yes | Establishes a WebSocket connection and subscribes the client to the specified topic. |
+
+- **Authentication**: The `WSValidToken` dependency ensures that only authenticated users can establish a WebSocket connection.
+- **Pub/Sub Relay**: Once connected, a client can send any JSON message as long as it contains both a `topic` and a `type` key (e.g., `{"topic": "general", "type": "event_name", ...}`). The server validates that the `topic` in the message body matches the topic in the URL, then broadcasts the original JSON object to all other clients on that topic.
 
 ---
 
 ## Database Layer
 
 ### Connection Configuration
+- **Async Engine**: `create_async_engine` with connection pooling.
+- **URL**: Configured via environment variables, using `asyncpg` driver.
+- **Sync URL**: A separate sync URL is provided for Alembic migrations (`psycopg2` driver).
 
-**Async Engine** (`create_async_engine`):
-- **URL Format**: `postgresql+asyncpg://user:password@host:port/dbname`
-- **Echo**: Enabled in development for SQL logging
-- **Pool Pre-ping**: Enabled to verify connection health before use
-- **Connection Pooling**: Managed by SQLAlchemy (default pool size)
-
-**Session Factory** (`async_sessionmaker`):
-- **expire_on_commit=False**: Prevents lazy loading issues after commit
-- **autoflush=False**: Manual control over flush operations
-
-**Dual URLs**:
-- **Async URL** (`database_url`): Used by application runtime (asyncpg driver)
-- **Sync URL** (`database_url_sync`): Used by Alembic migrations (psycopg2 driver)
-
-### Database Session Management
-
-**Dependency Pattern** (`get_db()`):
-- One session per request
-- Automatic transaction management
-- Auto-commit on success, auto-rollback on error
-- Proper cleanup even on exceptions
+### Session Management
+- **Per-request sessions** provided by the `get_db` dependency.
+- **Automatic transaction management**: Commits on success, rolls back on error.
 
 ### Data Models
-
-**Base Class**:
-- `DeclarativeBase` from SQLAlchemy 2.0
-- All models inherit from custom `Base` class
-
-**Current Models**:
-- **User**: id (PK), email (unique), first_name, last_name, hashed_password, is_active, created_at
-
-**Typed Mappings**:
-Uses `Mapped[type]` annotations for type safety and IDE support.
+- **Base Class**: All models inherit from a `DeclarativeBase`.
+- **Current Models**: `User` model for the authentication system.
+- **Typed Mappings**: Uses `Mapped[T]` for type safety.
 
 ### Migrations (Alembic)
-
-**Configuration**:
-- **Script location**: `migrations/` directory
-- **Database URL**: Dynamically set from settings in `migrations/env.py`
-- **Target metadata**: Imported from `src.db.Base.metadata`
-- **Offline mode**: Supported for SQL script generation
-- **Online mode**: Default, uses database connection
-
-**Current Migrations**:
-1. `0620bbb0f141` - Initial migration setup
-2. `d34add583c74` - Created users table
-
-**Commands**:
-- `poetry run alembic revision --autogenerate -m "message"` - Generate new migration
-- `poetry run alembic upgrade head` - Apply all pending migrations
-- `poetry run alembic downgrade -1` - Rollback one migration
-- `poetry run alembic current` - Show current revision
-- `poetry run alembic history` - Show migration history
-
-**Exclusions**:
-Migration files in `migrations/versions/` are excluded from Black, Ruff, and MyPy via pre-commit hooks.
+- **Configuration**: Managed in `alembic.ini` and `migrations/env.py`.
+- **URL**: Dynamically set from application settings.
+- **Commands**: Standard `alembic revision`, `upgrade`, `downgrade` commands.
 
 ---
 
 ## Exception Handling
 
-### Exception Hierarchy
+### Hierarchy
+A custom `AppError` serves as the base for all domain-specific exceptions, like those in the `auth` module.
 
-```
-Exception (Python built-in)
-└── AppError (src/core/exceptions.py)
-    └── Auth Module Exceptions (src/auth/exceptions.py)
-        ├── InvalidCredentialsError (401, AUTH_INVALID_CREDENTIALS)
-        ├── TokenExpiredError (401, AUTH_TOKEN_EXPIRED)
-        ├── InvalidTokenError (401, AUTH_INVALID_TOKEN)
-        ├── UserInactiveError (403, AUTH_USER_INACTIVE)
-        ├── PermissionDeniedError (403, AUTH_PERMISSION_DENIED)
-        ├── UserNotFoundError (404, AUTH_USER_NOT_FOUND)
-        └── UserAlreadyExistsError (409, AUTH_USER_ALREADY_EXISTS)
-```
-
-### Base Exception (AppError)
-
-**Attributes**:
-- `status_code` (int) - HTTP status code (default: 400)
-- `error_code` (str) - Machine-readable error identifier
-- `message` (str) - Human-readable error message
-- `errors` (list[dict] | None) - Additional error details
-
-**Response Format** (ErrorResponse):
-```json
-{
-  "detail": "Error message",
-  "error_code": "ERROR_CODE",
-  "errors": [...]  // optional
-}
-```
-
-### Global Exception Handlers
-
+### Global Handlers
 Registered in `src/core/exceptions.py`:
+- **AppError Handler**: Catches custom exceptions and returns structured JSON.
+- **HTTPException Handler**: Catches FastAPI/Starlette HTTP exceptions.
+- **RequestValidationError Handler**: Handles Pydantic validation errors (422).
+- **RateLimitExceeded Handler**: Manages rate limit violations (429).
+- **Generic Handler**: A catch-all for any unhandled exceptions (500).
 
-1. **AppError Handler** - Catches custom domain exceptions, returns structured JSON
-2. **HTTPException Handler** - Catches Starlette HTTP exceptions
-3. **RequestValidationError Handler** - Catches Pydantic validation errors (422)
-4. **RateLimitExceeded Handler** - Catches SlowAPI rate limit violations (429)
-5. **Generic Exception Handler** - Catch-all for unhandled exceptions (500)
-
-All handlers log appropriately and return consistent JSON error responses.
+All handlers log the error and return a consistent JSON response.
 
 ---
 
 ## Configuration Management
 
 ### Pydantic Settings
+- **Source**: `src/core/config.py` using `pydantic-settings`.
+- **Priority**: 1. Environment variables, 2. `.env` file, 3. Default values.
 
-**Implementation**: `src/core/config.py` uses `BaseSettings` from `pydantic-settings`
-
-**Configuration Hierarchy** (priority order):
-1. Environment variables (highest)
-2. `.env` file
-3. Default values in code (lowest)
-
-**Settings Class Configuration**:
-- `env_file = ".env"` - Read from .env file
-- `env_file_encoding = "utf-8"` - UTF-8 encoding
-- `case_sensitive = False` - Case-insensitive environment variables
-- `extra = "ignore"` - Ignore unknown environment variables
-
-### Configuration Categories
-
-**Server Settings**:
-- `HOST` (default: "localhost") - Server bind host
-- `PORT` (default: 8000) - Server bind port
-- `ENVIRONMENT` (default: "development") - Literal["development", "production"]
-
-**Rate Limiting**:
-- `RATE_LIMIT` (default: "1/second") - Format: "amount/period"
-
-**Database Settings**:
-- `DB_USER` (default: "postgres") - Database username
-- `DB_PASSWORD` (default: "1234") - Database password
-- `DB_HOST` (default: "localhost") - Database host
-- `DB_PORT` (default: 5432) - Database port
-- `DB_NAME` (default: "datamodelchat") - Database name
-
-**JWT Settings**:
-- `JWT_SECRET_KEY` (default: "myjwtsecretkey") - **Change in production!**
-- `JWT_ALGORITHM` (default: "HS256") - JWT signing algorithm
-- `ACCESS_TOKEN_EXPIRE_MINUTES` (default: 30) - Token TTL
-
-**Computed Properties**:
-- `database_url` - PostgreSQL+asyncpg connection string
-- `database_url_sync` - PostgreSQL+psycopg2 connection string
-
-### Security Best Practices
-
-- `.env` is gitignored
-- `.env.example` provided as template
-- No sensitive defaults (change `JWT_SECRET_KEY` in production)
-- Configuration validation via Pydantic
-
+### Key Configuration Categories
+- **Server**: `HOST`, `PORT`, `ENVIRONMENT`.
+- **Rate Limiting**: `RATE_LIMIT`.
+- **Database**: `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT`, `DB_NAME` (default: "templatedb").
+- **JWT**: `JWT_SECRET_KEY`, `JWT_ALGORITHM`, `ACCESS_TOKEN_EXPIRE_MINUTES`.
+- **CORS**: `CORS_ORIGINS`.
+- **File Storage**: `BASE_IMAGE_PATH`.
 ---
 
 ## Logging System
 
 ### Configuration (`src/core/logging.py`)
-
-**Log Directory**: `logs/` (created automatically)
-
-**Log File Naming**: `YYYYMMDD-HHMMSS.log` (timestamp-based)
-
-**Log Format**: `[timestamp] [logger_name] [level] message`
-
-**Handlers**:
-1. **StreamHandler** - Console output (stdout)
-2. **FileHandler** - File output in `logs/` directory
-
-**Logging Levels**:
-- **Development**: DEBUG (verbose logging)
-- **Production**: WARNING (errors and warnings only)
+- **Directory**: The `logs/` directory is used for file-based logging. Note: This directory is gitignored and must be created if it doesn't exist.
+- **Format**: `[timestamp] [logger_name] [level] message`.
+- **Handlers**: `StreamHandler` (console) and `FileHandler` (`logs/`).
 
 ### Logged Events
-
-**ProcessTimeMiddleware** logs:
-- **INFO**: Successful requests with `METHOD PATH - STATUS - DURATION`
-- **ERROR**: Failed requests with `METHOD PATH - Failed - DURATION`
-
-**Exception Handlers** log:
-- **WARNING**: AppError, HTTPException, validation errors, rate limits
-- **ERROR**: Unhandled exceptions with stack traces
-
-**Authentication** logs:
-- **WARNING**: Invalid credentials, expired tokens, validation failures
-
-### Per-Module Loggers
-
-Each module uses `logger = logging.getLogger(__name__)` for granular control.
-
----
-
-## Dependency Management (Poetry)
-
-### Poetry Configuration
-
-**Project Metadata** (`[project]` table in `pyproject.toml`):
-- Uses **PEP 621** standard format
-- `package-mode = false` - Not a distributable package
-- `requires-python = ">=3.12,<3.13"` - Python version constraint
-
-**Build System** (`[build-system]`):
-- `poetry-core>=2.0.0,<3.0.0` as build backend
-- Follows **PEP 517** standard
-
-**Dependency Groups**:
-- **Default group**: Production dependencies (runtime required)
-- **Dev group** (`[dependency-groups].dev`): Development-only dependencies
-
-### Dependency Specification
-
-**Version Constraints**:
-- Uses `>=min,<max` format for compatibility ranges
-- Uses `==version` for pinned versions (e.g., bcrypt)
-- Extras specified with `[extra]` notation (e.g., `uvicorn[standard]`)
-
-### Poetry Commands
-
-**Installation**:
-- `poetry install` - Install all dependencies (including dev)
-- `poetry install --without dev` - Install production only
-- `poetry install --sync` - Remove unlisted packages
-
-**Dependency Management**:
-- `poetry add package` - Add production dependency
-- `poetry add --group dev package` - Add dev dependency
-- `poetry remove package` - Remove dependency
-- `poetry update` - Update dependencies to latest compatible versions
-
-**Lock File**:
-- `poetry.lock` - Locked versions for reproducible installs
-- Auto-updated on dependency changes
-- Committed to version control
-
-**Virtual Environment**:
-- `poetry shell` - Activate virtualenv
-- `poetry run command` - Run command in virtualenv
+- **INFO**: Successful requests with duration.
+- **WARNING**: Handled errors like validation failures or invalid tokens.
+- **ERROR**: Unhandled exceptions with stack traces.
 
 ---
 
 ## Code Quality (Pre-commit)
 
-### Pre-commit Hooks Configuration
-
-**Hook Repositories** (`.pre-commit-config.yaml`):
-
-1. **pre-commit-hooks** (v5.0.0):
-   - `trailing-whitespace` - Remove trailing whitespace
-   - `end-of-file-fixer` - Ensure files end with newline
-   - `check-yaml` - Validate YAML syntax
-   - `debug-statements` - Prevent debug statements in commits
-
-2. **Black** (24.8.0):
-   - Code formatter with Python 3.12 target
-   - Excludes `migrations/versions/` directory
-   - Opinionated, zero-config formatting
-
-3. **Ruff** (v0.7.4):
-   - Fast Python linter
-   - `--fix` flag for auto-fixable issues
-   - Excludes `migrations/versions/` directory
-
-4. **MyPy** (v1.11.2):
-   - Static type checker
-   - Excludes `migrations/versions/` directory
-
-### Usage
-
-**Installation**:
-```bash
-poetry run pre-commit install  # Install git hooks
-```
-
-**Manual Execution**:
-```bash
-poetry run pre-commit run --all-files  # Run all hooks on all files
-poetry run black src/                  # Format specific directory
-poetry run ruff check src/             # Lint specific directory
-poetry run mypy src/                   # Type check specific directory
-```
-
-**Auto-execution**:
-Hooks run automatically on `git commit`, preventing commits with issues.
-
----
-
-## API Documentation
-
-### Auto-Generated Documentation
-
-FastAPI provides interactive API documentation out-of-the-box:
-
-**Swagger UI** - `http://localhost:8000/docs`
-- Interactive API explorer
-- Try endpoints directly in browser
-- View request/response schemas
-
-**ReDoc** - `http://localhost:8000/redoc`
-- Alternative documentation UI
-- Better for reading and printing
-
-**OpenAPI Schema** - `http://localhost:8000/openapi.json`
-- Machine-readable API specification
-- OpenAPI 3.1.0 format
-
-### Schema Generation
-
-Documentation is auto-generated from:
-- Python type hints
-- Pydantic models
-- Route decorators (`@router.get`, `response_model`, `status_code`)
-- Docstrings (if provided)
-
----
-
-## Health Checks
-
-### Endpoints
-
-**Root** (`GET /`):
-- Returns `{"message": "Hello World"}`
-- Basic liveness check
-
-**Health Check** (`GET /health`):
-- Database connectivity test
-- Uptime tracking
-- Version information
-- Response format:
-  ```json
-  {
-    "status": "ok" | "degraded",
-    "uptime_seconds": 123.456,
-    "version": "0.1.0",
-    "db_status": "connected" | "disconnected"
-  }
-  ```
-
-### Implementation Details
-
-- Database check executes `SELECT 1` query
-- Non-blocking async database check
-- Version detection from package metadata (falls back to "0.1.0")
-- Uptime calculated from server start time
+Pre-commit hooks are configured in `.pre-commit-config.yaml` to run automatically on `git commit`.
+- **`black`**: For code formatting.
+- **`ruff`**: For linting and auto-fixing.
+- **`mypy`**: For static type checking.
 
 ---
 
 ## Development Workflow
 
 ### Initial Setup
-
 ```bash
-# Clone repository
+# Clone the repository
 git clone <repository-url>
-cd data-model-chat-server
+cd fastapi-server-template
 
 # Install dependencies
 poetry install
 
 # Configure environment
 cp .env.example .env
-# Edit .env with your database credentials
+# Edit .env with your database credentials and a new JWT_SECRET_KEY
 
 # Set up pre-commit hooks
 poetry run pre-commit install
 
 # Run database migrations
 poetry run alembic upgrade head
-
-# Start development server
-poetry run python -m src.main
 ```
 
 ### Development Server
-
-**Command**: `poetry run python -m src.main`
-
-**Features**:
-- Auto-reload on code changes (development mode)
-- Watches `src/` directory
-- Binds to configured host:port (default: localhost:8000)
-- DEBUG-level logging in development
+```bash
+poetry run python -m src.main
+```
+The server runs with auto-reload in development.
 
 ---
 
 ## Summary
 
-The **Data Model Chat Server** currently provides:
+This **FastAPI Server Template** provides:
 
-### ✅ Implemented Features
-
-- **Authentication System**: JWT-based auth with registration, login, user management
-- **Database Layer**: Async SQLAlchemy with connection pooling and migrations
-- **API Framework**: FastAPI with automatic documentation
-- **Configuration**: Environment-based settings with validation
-- **Logging**: Structured logging with file and console output
-- **Middleware**: CORS, rate limiting, request timing
-- **Exception Handling**: Centralized error handling with structured responses
-- **Code Quality**: Pre-commit hooks with formatting, linting, type checking
-- **Health Checks**: Database connectivity and uptime monitoring
+### ✅ Core Features
+- **Authentication System**: JWT-based auth with registration, login, and user management.
+- **Database Layer**: Async SQLAlchemy with connection pooling and Alembic migrations.
+- **API Framework**: FastAPI with automatic OpenAPI documentation.
+- **Real-time Notifications**: Generic topic-based WebSocket system.
+- **Configuration**: Environment-based settings with Pydantic validation.
+- **Logging**: Structured logging with file and console output.
+- **Middleware**: CORS, rate limiting, and request timing.
+- **Exception Handling**: Centralized error handling.
+- **Code Quality**: Pre-commit hooks with formatting, linting, and type checking.
+- **Health Checks**: Database connectivity and uptime monitoring.
 
 ### 📚 Documentation
-
-- **ARCHITECTURE.md**: This file - current system architecture
-- **ROADMAP.md**: Future development phases and plans
-
----
-
-**Version**: 1.2
-**Last Updated**: 2025-12-08
-**Status**: Production-ready authentication and infrastructure
+- **ARCHITECTURE.md**: This file, detailing the system architecture.

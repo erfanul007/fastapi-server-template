@@ -1,6 +1,6 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
-class WebSocketNotification(BaseModel):
-    group_id: str
-    message_type: str = Field(..., description="different purposes message type")
+class WebSocketMessage(BaseModel):
+    topic: str
+    type: str

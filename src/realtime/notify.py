@@ -1,13 +1,13 @@
 import logging
 
 from .connection_manager import manager
-from .schemas import WebSocketNotification
+from .schemas import WebSocketMessage
 
 logger = logging.getLogger(__name__)
 
 
-async def notify_group_on_update(notification: WebSocketNotification):
+async def notify_group_on_update(notification: WebSocketMessage):
     payload_json = notification.model_dump_json()
 
-    await manager.send_message_to_group(notification.group_id, payload_json)
-    logger.info("Notification sent to all clients in group [%s]", notification.group_id)
+    await manager.broadcast_to_topic(notification.topic, payload_json)
+    logger.info("Notification sent to all clients in group [%s]", notification.topic)
