@@ -1,34 +1,71 @@
-# Data Model Chat Server
+# FastAPI Server Template
 
-A RAG-based agentic chat application built with FastAPI.
+A production-ready FastAPI server template with a focus on vertical slice architecture, scalability, and developer experience.
+
+**Requirements**: Python 3.12
+
+## Features
+
+-   **FastAPI**: High-performance web framework.
+-   **SQLAlchemy 2.0**: Asynchronous database operations.
+-   **Pydantic**: Robust data validation and settings management.
+-   **Alembic**: Database migrations.
+-   **JWT Authentication**: Secure user authentication.
+-   **Dependency Injection**: Decoupled and testable components.
+-   **Vertical Slice Architecture**: Organized by feature for better maintainability.
+-   **Structured Logging**: Centralized and configurable logging.
+-   **Global Exception Handling**: Consistent error responses.
+-   **CORS & Rate Limiting**: Essential security middleware.
+-   **Health Checks**: Monitor application status.
+-   **WebSocket Support**: Generic real-time notification system.
+-   **Pre-commit Hooks**: Automated code quality checks with `black`, `ruff`, and `mypy`.
 
 ## Setup
 
-1.  **Install Dependencies**
-    ```bash
-    poetry install
-    ```
+```bash
+# Install dependencies
+poetry install
 
-2.  **Configure Environment**
-    ```bash
-    cp .env.example .env
-    ```
+# Configure environment
+cp .env.example .env
+# Edit .env with your database credentials
+
+# Set up pre-commit hooks
+poetry run pre-commit install
+
+# Run database migrations
+poetry run alembic upgrade head
+```
 
 ## Run
 
-Start the server:
 ```bash
 poetry run python -m src.main
 ```
 
-The API will be available at `http://localhost:8000`.
-
-## Database
-
-- **Create Migration**: `alembic revision --autogenerate -m "message"`
-- **Run Migration**: `alembic upgrade head`
+API available at `http://localhost:8000`
+- Docs: `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`
 
 ## Development
 
-- **Add Dependencies**: `poetry add <package>`
-- **Run Tests**: `poetry run pytest`
+**Add Dependencies**
+```bash
+poetry add <package>              # Production dependency
+poetry add --group dev <package>  # Dev dependency
+```
+
+**Database Migrations**
+```bash
+poetry run alembic revision --autogenerate -m "description"
+poetry run alembic upgrade head
+```
+
+**Code Quality**
+```bash
+poetry run pre-commit run --all-files  # Run all checks
+```
+
+## Documentation
+
+- [ARCHITECTURE.md](docs/ARCHITECTURE.md) - System architecture
