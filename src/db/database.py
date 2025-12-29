@@ -1,11 +1,14 @@
+from contextlib import asynccontextmanager
 from typing import AsyncGenerator
-from sqlalchemy.orm import DeclarativeBase
+
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,
-    create_async_engine,
     async_sessionmaker,
+    create_async_engine,
 )
+from sqlalchemy.orm import DeclarativeBase
+
 from src.core.config import settings
 
 
@@ -28,11 +31,17 @@ async_session_factory = async_sessionmaker(
 )
 
 
-async def get_db() -> AsyncGenerator[AsyncSession, None]:
+@asynccontextmanager
+async def db_session() -> AsyncGenerator[AsyncSession, None]:
     async with async_session_factory() as session:
         try:
             yield session
             await session.commit()
-        except:
+        except Exception:
             await session.rollback()
             raise
+
+
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    async with db_session() as session:
+        yield session

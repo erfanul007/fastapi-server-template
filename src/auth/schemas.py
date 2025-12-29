@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from pydantic import BaseModel, EmailStr, Field
 
 
@@ -28,6 +29,7 @@ class UserRead(UserBase):
 
 class LoginResponse(BaseModel):
     access_token: str
+    token_type: str = "bearer"
 
 
 class TokenData(BaseModel):

@@ -1,11 +1,12 @@
 import logging
 from typing import Any
-from fastapi import FastAPI, Request
-from fastapi.exceptions import RequestValidationError
+
+from fastapi import FastAPI, Request, WebSocket
+from fastapi.exceptions import RequestValidationError, WebSocketRequestValidationError
 from fastapi.responses import JSONResponse
-from starlette.exceptions import HTTPException as StarletteHTTPException
-from slowapi.errors import RateLimitExceeded
 from pydantic import BaseModel
+from slowapi.errors import RateLimitExceeded
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 logger = logging.getLogger(__name__)
 
@@ -53,14 +54,23 @@ class AppError(Exception):
         )
 
 
-def app_error_handler(request: Request, exc: AppError):
+def app_error_handler(request: Request | WebSocket, exc: AppError):
+    path = request.url.path if isinstance(request, (Request, WebSocket)) else "unknown"
+    method = request.method if isinstance(request, Request) else "WEBSOCKET"
+
     logger.warning(
         "AppError [%s] %s %s: %s",
         exc.error_code,
-        request.method,
-        request.url.path,
+        method,
+        path,
         exc.message,
     )
+
+    if isinstance(request, WebSocket):
+        # We cannot return a JSONResponse to a WebSocket
+        # The connection will likely be closed by the exception anyway
+        return None
+
     return JSONResponse(
         status_code=exc.status_code,
         content=exc.to_response().model_dump(exclude_none=True),
@@ -96,6 +106,18 @@ def validation_exception_handler(request: Request, exc: RequestValidationError):
     )
 
 
+def websocket_validation_exception_handler(
+    request: WebSocket, exc: WebSocketRequestValidationError
+):
+    logger.warning(
+        "WebSocket validation error on %s: %s",
+        request.url.path,
+        exc.errors(),
+    )
+    # No response can be sent; connection is closed by FastAPI
+    return None
+
+
 def rate_limit_handler(request: Request, exc: RateLimitExceeded):
     logger.warning(
         "Rate limit exceeded on %s %s: %s",
@@ -125,5 +147,8 @@ def register_exception_handlers(app: FastAPI) -> None:
     app.add_exception_handler(AppError, app_error_handler)
     app.add_exception_handler(StarletteHTTPException, http_exception_handler)
     app.add_exception_handler(RequestValidationError, validation_exception_handler)
+    app.add_exception_handler(
+        WebSocketRequestValidationError, websocket_validation_exception_handler
+    )
     app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
     app.add_exception_handler(Exception, generic_exception_handler)

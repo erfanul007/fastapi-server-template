@@ -1,15 +1,17 @@
+from typing import Sequence
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from .exceptions import InvalidCredentialsError, UserAlreadyExistsError
 from .models import User
-from .schemas import LoginResponse, UserCreate, UserLogin, UserRead
+from .schemas import LoginResponse, UserCreate, UserLogin
 from .security import (
-    get_password_hash,
-    verify_password,
     create_access_token_data,
     create_jwt_token,
+    get_password_hash,
+    verify_password,
 )
-from .exceptions import UserAlreadyExistsError, InvalidCredentialsError
 
 
 async def get_user_by_email(db: AsyncSession, email: str) -> User | None:
@@ -24,7 +26,7 @@ async def get_user_by_id(db: AsyncSession, user_id: int) -> User | None:
     return res.scalar_one_or_none()
 
 
-async def register_user(db: AsyncSession, payload: UserCreate) -> UserRead:
+async def register_user(db: AsyncSession, payload: UserCreate) -> User:
     existing_user = await get_user_by_email(db, payload.email)
     if existing_user:
         raise UserAlreadyExistsError()
@@ -50,7 +52,7 @@ async def login_user(db: AsyncSession, payload: UserLogin) -> LoginResponse:
     return LoginResponse(access_token=access_token)
 
 
-async def get_all_users(db: AsyncSession) -> list[UserRead]:
+async def get_all_users(db: AsyncSession) -> Sequence[User]:
     stmt = select(User)
     res = await db.execute(stmt)
     return res.scalars().all()

@@ -2,11 +2,11 @@
 package-mode = false
 
 [project]
-name = "data-model-chat-server"
+name = "fastapi-server-template"
 version = "0.1.0"
-description = "RAG based agentic chat application with FastAPI"
+description = "Web project template following vertical slice with FastAPI"
 authors = [
-    {name = "Md Erfanul Islam Bhuiyan",email = "erfanul.islam@infinitibit.com"}
+    {name = "Md Erfanul Islam Bhuiyan",email = "eib.erfan@gmail.com"}
 ]
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
@@ -16,7 +16,7 @@ dependencies = [
     "pydantic-settings (>=2.12.0,<3.0.0)",
     "httpx (>=0.28.1,<0.29.0)",
     "slowapi (>=0.1.9,<0.2.0)",
-    "sqlalchemy (>=2.0.44,<3.0.0)",
+    "sqlalchemy[asyncio] (>=2.0.44,<3.0.0)",
     "alembic (>=1.17.2,<2.0.0)",
     "asyncpg (>=0.31.0,<0.32.0)",
     "psycopg2 (>=2.9.11,<3.0.0)",
@@ -24,6 +24,7 @@ dependencies = [
     "passlib[bcrypt] (>=1.7.4,<2.0.0)",
     "pydantic[email] (>=2.12.5,<3.0.0)",
     "bcrypt (==4.3.0)",
+    "python-multipart (>=0.0.21,<0.0.22)",
 ]
 
 

@@ -1,9 +1,9 @@
-import time
 import logging
-from pydantic import BaseModel
+import time
+from importlib.metadata import PackageNotFoundError, version
 
 from fastapi import APIRouter, Depends
-from importlib.metadata import version, PackageNotFoundError
+from pydantic import BaseModel
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession

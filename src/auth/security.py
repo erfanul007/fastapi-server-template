@@ -1,11 +1,12 @@
 import logging
+from datetime import datetime, timedelta, timezone
+
 import jwt
 from passlib.context import CryptContext
-from datetime import datetime, timedelta, timezone
 
 from src.core import settings
 
-from .exceptions import TokenExpiredError, InvalidTokenError
+from .exceptions import InvalidTokenError, TokenExpiredError
 from .schemas import TokenData
 
 logger = logging.getLogger(__name__)
@@ -43,6 +44,8 @@ def decode_jwt_token(token: str) -> TokenData:
         token_data = TokenData(**payload)
         return token_data
     except jwt.ExpiredSignatureError:
+        logger.info("Token expired")
         raise TokenExpiredError()
     except jwt.InvalidTokenError:
+        logger.warning("Invalid token")
         raise InvalidTokenError()
